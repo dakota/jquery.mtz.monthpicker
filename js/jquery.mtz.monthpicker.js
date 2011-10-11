@@ -60,10 +60,12 @@
 			maxDate: null,
 			minDate: null,
 			appendTo: 'body',
+			allowEmpty: false,
+			emptyText: 'All months and years',
 			select: function() {}
 		},
 		_create: function() {
-			this.widget = null;
+			this.widgetElementElement = null;
 			
 			this.refresh();
 		},
@@ -73,7 +75,7 @@
 		},
 		_disableMonths: function() {
 			var 
-				selectedYear = this.widget.find('.mtz-monthpicker-years').val(),
+				selectedYear = this.widgetElement.find('.mtz-monthpicker-years').val(),
 				minMonth = 1,
 				maxMonth = 12,
 				month = 1;
@@ -86,31 +88,31 @@
 				minMonth = this.options.minDate.getMonth()+1;
 			}
 			
-			this.widget.find('.mtz-monthpicker-month').addClass('ui-state-disabled');
+			this.widgetElement.find('.mtz-monthpicker-month').addClass('ui-state-disabled');
 			for(month=minMonth;month<=maxMonth;month++) {
-				this.widget.find('.mtz-monthpicker-month-'+month).removeClass('ui-state-disabled');
+				this.widgetElement.find('.mtz-monthpicker-month-'+month).removeClass('ui-state-disabled');
 			}
 		},
 		_highlightSelected: function() {
 			var selected = this.element.data('mtz.selected');
 			
-			this.widget
+			this.widgetElement
 					.find('.mtz-monthpicker-month')
 						.removeClass('ui-state-active');						
 
-			if(this.widget.find('.mtz-monthpicker-years').val() == selected.year) {
-				this.widget
+			if(this.widgetElement.find('.mtz-monthpicker-years').val() == selected.year) {
+				this.widgetElement
 					.find('.mtz-monthpicker-month-' + selected.month)
 						.addClass('ui-state-active');
 			}
 		},
 		hide: function() {
-			this.widget.hide('fast');
+			this.widgetElement.hide('fast');
 		},
 		show: function() {
 			var self = this;
 			
-			this.widget.show().position({
+			this.widgetElement.show().position({
 				my: 'left top',
 				at: 'left bottom',
 				of: this.element
@@ -123,7 +125,7 @@
 			});
 
 			var selected = this.element.data('mtz.selected');
-			this.widget.find('.mtz-monthpicker-years').val(selected.year);
+			this.widgetElement.find('.mtz-monthpicker-years').val(selected.year);
 
 			this._highlightSelected();
 		},
@@ -188,11 +190,19 @@
 			
 			table.append(tbody).appendTo(container);
 
-			if(this.widget) {
-				this.widget.remove();
+			if(this.widgetElement) {
+				this.widgetElement.remove();
 			}
 			
-			this.widget = container.appendTo(this.options.appendTo).hide();
+			this.widgetElement = container.appendTo(this.options.appendTo).hide();
+			
+			if(this.options.allowEmpty === true) {
+				$('<div class="mtz-monthpicker ui-datepicker-buttonpane ui-widget-content">\n\
+					<button type="button" class="mtz-monthpicker mtz-montpicker-empty ui-datepicker-current ui-state-default ui-priority-secondary ui-corner-all">' + 
+						this.options.emptyText + 
+					'</button></div>')
+					.appendTo(this.widgetElement);
+			}
 			
 			this.element.data('mtz.selected', {
 				year: this.options.selected.getFullYear(),
@@ -206,10 +216,10 @@
 			this._events();
 		},
 		_buttonStatus: function() {
-			var combo = this.widget.find('.mtz-monthpicker-years');
+			var combo = this.widgetElement.find('.mtz-monthpicker-years');
 			
 			if(combo.val() == this._minYear) {
-				this.widget
+				this.widgetElement
 					.find('.mtz-monthpicker-year-prev')
 						.addClass('ui-state-disabled')
 					.end()
@@ -217,7 +227,7 @@
 						.removeClass('ui-state-disabled');
 			}
 			else if(combo.val() == this._maxYear) {
-				this.widget
+				this.widgetElement
 					.find('.mtz-monthpicker-year-prev')
 						.removeClass('ui-state-disabled')
 					.end()
@@ -225,7 +235,7 @@
 						.addClass('ui-state-disabled');
 			}
 			else {
-				this.widget
+				this.widgetElement
 					.find('.mtz-monthpicker-year-prev')
 						.removeClass('ui-state-disabled')
 					.end()
@@ -235,7 +245,7 @@
 		},
 		_events: function() {
 			var self = this,
-				widget = this.widget,
+				widget = this.widgetElement,
 				combo = widget.find('.mtz-monthpicker-years');
 			
 			combo
@@ -246,7 +256,7 @@
 				});
 			
 			widget
-				.find('.mtz-monthpicker-month, .mtz-monthpicker-header a')
+				.find('.mtz-monthpicker-month, .mtz-monthpicker-header a, .mtz-montpicker-empty')
 					.bind('mouseenter.mtz', function() { $(this).addClass('ui-state-hover');})
 					.bind('mouseleave.mtz', function() { $(this).removeClass('ui-state-hover');})
 				.end()
@@ -273,6 +283,12 @@
 							self.setDate($this.data('month'), combo.val());
 						}
 						self.hide();
+					})
+				.end()
+				.find('.mtz-montpicker-empty')
+					.bind('click.mtz', function() {
+						self.setDate(null, null);
+						self.hide();
 					});
 					
 			this.element
@@ -289,7 +305,7 @@
 			this._trigger('select', 0, {selected: this.element.data('mtz.selected'), element: this.element});
 		},
 		destroy: function() {
-			this.widget.unbind('mtz').remove();
+			this.widgetElement.unbind('mtz').remove();
 			this.element.unbind('mtz').removeClass('mtz-monthpicker').removeData('mtz.selected');
 			$(document).unbind('mtz');
 			
