@@ -62,7 +62,8 @@
 			appendTo: 'body',
 			allowEmpty: false,
 			emptyText: 'All months and years',
-			select: function() {}
+			select: function() {},
+			disabled: {}
 		},
 		_create: function() {
 			this.widgetElementElement = null;
@@ -78,7 +79,8 @@
 				selectedYear = this.widgetElement.find('.mtz-monthpicker-years').val(),
 				minMonth = 1,
 				maxMonth = 12,
-				month = 1;
+				month = 1,
+				disable = false;
 			
 			if(selectedYear == this._maxYear) {
 				maxMonth = this.options.maxDate.getMonth()+1;
@@ -90,7 +92,17 @@
 			
 			this.widgetElement.find('.mtz-monthpicker-month').addClass('ui-state-disabled');
 			for(month=minMonth;month<=maxMonth;month++) {
-				this.widgetElement.find('.mtz-monthpicker-month-'+month).removeClass('ui-state-disabled');
+				if(typeof this.options.disabled[selectedYear] !== 'undefined') {
+					if($.inArray(month, this.options.disabled[selectedYear]) >= 0) {
+						disable = true;
+					}
+				}
+
+				if(!disable) {
+					this.widgetElement.find('.mtz-monthpicker-month-'+month).removeClass('ui-state-disabled');
+				}
+
+				disable = false;
 			}
 		},
 		_highlightSelected: function() {
