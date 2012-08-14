@@ -268,43 +268,39 @@
 				});
 			
 			widget
-				.find('.mtz-monthpicker-month, .mtz-monthpicker-header a, .mtz-montpicker-empty')
-					.bind('mouseenter.mtz', function() { $(this).addClass('ui-state-hover');})
-					.bind('mouseleave.mtz', function() { $(this).removeClass('ui-state-hover');})
-				.end()
-				.find('.mtz-monthpicker-year-prev')
-					.bind('click.mtz', function() {
-						var value = parseInt(combo.val());
-						if(value > self._minYear) {
-							combo.val(value - 1).change();
-						}
-					})
-				.end()
-				.find('.mtz-monthpicker-year-next')
-					.bind('click.mtz', function() {
-						var value = parseInt(combo.val());
-						if(value < self._maxYear) {
-							combo.val(value + 1).change();
-						}
-					})
-				.end()
-				.find('.mtz-monthpicker-month')
-					.bind('click.mtz', function() {
-						var $this = $(this);
-						if(!$this.hasClass('ui-state-disabled')) {
-							self.setDate($this.data('month'), combo.val());
-						}
-						self.hide();
-					})
-				.end()
-				.find('.mtz-montpicker-empty')
-					.bind('click.mtz', function() {
-						self.setDate(null, null);
-						self.hide();
-					});
+				.on('mouseenter.mtz', '.mtz-monthpicker-month, .mtz-monthpicker-header a, .mtz-montpicker-empty', function() { $(this).addClass('ui-state-hover');})
+				.on('mouseleave.mtz', '.mtz-monthpicker-month, .mtz-monthpicker-header a, .mtz-montpicker-empty', function() { $(this).removeClass('ui-state-hover');})
+				.on('click.mtz', '.mtz-monthpicker-year-prev', function(e) {
+					e.preventDefault();
+					var value = parseInt(combo.val());
+					if(value > self._minYear) {
+						combo.val(value - 1).change();
+					}
+				})
+				.on('click.mtz', '.mtz-monthpicker-year-next', function(e) {
+					e.preventDefault();
+					var value = parseInt(combo.val());
+					if(value < self._maxYear) {
+						combo.val(value + 1).change();
+					}
+				})
+				.on('click.mtz', '.mtz-monthpicker-month', function(e) {
+					e.preventDefault();
+					var $this = $(this);
+					if(!$this.hasClass('ui-state-disabled')) {
+						self.setDate($this.data('month'), combo.val());
+					}
+					self.hide();
+				})
+				.on('click.mtz', '.mtz-montpicker-empty', function(e) {
+					e.preventDefault();
+					self.setDate(null, null);
+					self.hide();
+				});
 					
 			this.element
-				.bind('click.mtz', function() {
+				.bind('click.mtz', function(e) {
+					e.preventDefault();
 					self.show();
 				});				
 		},
