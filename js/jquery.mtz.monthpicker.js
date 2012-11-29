@@ -302,7 +302,7 @@
 				.bind('click.mtz', function(e) {
 					e.preventDefault();
 					self.show();
-				});				
+				});
 		},
 		setDate: function(month, year) {
 			this.element.data('mtz.selected', {
