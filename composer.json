@@ -1,0 +1,26 @@
+{
+    "name": "dakota/monthpicker",
+    "description": "jQuery MonthPicker plugin",
+    "type": "component",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Luciano Cost",
+            "email": "luciano@monttez.com"
+        },
+        {
+            "name": "Walther Lalk",
+            "email": "waltherlalk@gmail.com"
+        }
+    ],
+    "require": {
+        "robloach/component-installer": "*"
+    },
+    "extra": {
+        "component": {
+            "scripts": [
+                "jquery.mtz.monthpicker.js"
+            ]
+        }
+    }
+}
